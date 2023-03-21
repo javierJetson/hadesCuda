@@ -1,0 +1,22 @@
+# Compilers
+CC = aarch64-linux-gnu-gcc.exe
+CXX = aarch64-linux-gnu-g++.exe # Will need to install raspberry64
+CXX_HOST = "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.35.32215\bin\Hostx64\x64\cl.exe"
+NVCC = nvcc
+NVCC_COMPILER_FLAG = -ccbin $(CXX)
+CFLAGS = -g -Werrors -Wfatal-errors
+INCLUDE = -I"C:\Xilinx\Vitis_HLS\2022.2\include"
+MACROS = -D CUDA=1
+HOST_COMPILER = -ccbin $(CXX_HOST)
+
+iznTesterCUDA: iznTest.o
+	$(NVCC) ./iznTest.obj ./iznCuda.obj -o iznCompleteCuda
+
+iznTest.o: IZN.o
+	$(NVCC) -O3 ./iznTest.cpp -c -o iznTest.obj $(INCLUDE) $(MACROS)
+
+IZN.o:
+	$(NVCC) ./izn.cu -c -o iznCuda.obj $(INCLUDE) $(MACROS)
+
+clean:
+	rm -rf *.obj iznCompleteCuda
